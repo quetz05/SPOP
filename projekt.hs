@@ -1,6 +1,8 @@
 import System.IO  
 import Control.Monad
 
+data Creek = Creek ((Int, Int)) [((Int, Int), Int)]  deriving (Eq, Show, Read) 
+
 main = 	do
 			putStrLn "Witaj w programie Strumyczek autorstwa Jarosława Kornaty i Bartosza Domagały"
 			putStrLn " "
