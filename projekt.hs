@@ -32,6 +32,9 @@ process  (dimX,dimY) (((x,y), v) : tail) wynik =
     then process (dimX,dimY) tail ((x,y) : wynik)
     else process (dimX,dimY) tail wynik
 
+outOfFields :: Int -> Int -> Int -> Int -> Bool
+outOfFields x y dimX dimY = (x < 0 || y < 0 || x > dimX || y > dimY)
+    
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
 -- x1 = ((a1,b1), v1)
