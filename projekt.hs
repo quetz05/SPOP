@@ -34,6 +34,11 @@ process  (dimX,dimY) (((x,y), v) : tail) wynik =
 
 outOfFields :: Int -> Int -> Int -> Int -> Bool
 outOfFields x y dimX dimY = (x < 0 || y < 0 || x > dimX || y > dimY)
+
+containsPoint :: [(Int, Int)] -> (Int,Int) -> Bool
+containsPoint [] (_,_) = False
+containsPoint (x:xs) (a,b) = if(fst x == a && snd x == b) then True
+                                 else containsPoint xs (a,b)
     
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
