@@ -31,3 +31,44 @@ process  (dimX,dimY) (((x,y), v) : tail) wynik =
     if v > 0 
     then process (dimX,dimY) tail ((x,y) : wynik)
     else process (dimX,dimY) tail wynik
+
+-- // zmienne
+-- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
+-- x1 = ((a1,b1), v1)
+-- checkedFields = [];
+
+-- // funkcja algorytmu
+-- algorihm(x)
+-- {
+ -- foreach (x in x:xs)
+ -- {
+  -- for(int i = 0; i < x.v1; i++)
+  -- {
+   -- checkFields += checkField(x);
+  -- }
+ -- }
+-- }
+
+-- // metoda wybierajaca pola do zaznaczenia
+-- checkField(x)
+-- {
+ -- if(!checkedFields.Contains(x-1, y-1) && !outOfFields(x-1, y-1))
+  -- return (x-1, y-1);
+ -- else if(!checkedFields.Contains(x-1, y) && !outOfFields(x-1, y))
+  -- return (x-1, y);
+ -- else if(!checkedFields.Contains(x, y-1) && !outOfFields(x, y-1))
+  -- return (x, y-1);
+ -- else if(!checkedFields.Contains(x, y) && !outOfFields(x, y))
+  -- return (x, y);
+
+-- }
+
+-- // metoda sprawdzajaca czy wspolrzedne nie wychodza poza pola
+-- outOfFields(x, y)
+-- {
+ -- if(x < 0 || y < 0 || x > h || y > w)
+  -- return false;
+ -- else
+  -- return true;
+
+-- }
