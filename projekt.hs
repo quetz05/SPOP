@@ -2,6 +2,8 @@ import System.IO
 import Control.Monad
 
 data Creek = Creek ((Int, Int)) [((Int, Int), Int)]  deriving (Eq, Show, Read) 
+data Point = Point (Int, Int)
+
 
 main =  do
             putStrLn "Witaj w programie Strumyczek autorstwa Jarosława Kornaty i Bartosza Domagały"
@@ -39,6 +41,11 @@ containsPoint :: [(Int, Int)] -> (Int,Int) -> Bool
 containsPoint [] (_,_) = False
 containsPoint (x:xs) (a,b) = if(fst x == a && snd x == b) then True
                                  else containsPoint xs (a,b)
+								 
+containsPoint2 :: [((Int, Int),(Int, Int))] -> ((Int,Int),(Int,Int)) -> Bool
+containsPoint2 [] (_,_) = False
+containsPoint2 (x:xs) (a,b) =  if((fst(fst x)) == fst a && fst(snd x) == snd a && snd(fst x) == fst b && snd(snd x) == snd b) then True
+                                           else containsPoint2 xs (a,b)
     
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
