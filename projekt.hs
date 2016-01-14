@@ -24,10 +24,10 @@ readInt = read
 
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
-zrob (Creek (_,_) (((x,y), v) : tail)) = process (((x,y), v) : tail) []
+zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = process (dimX,dimY)  (((x,y), v) : tail) []
 
-process [] wynik = wynik
-process (((x,y), v) : tail) wynik = 
+process (_,_) [] wynik = wynik
+process  (dimX,dimY) (((x,y), v) : tail) wynik = 
     if v > 0 
-    then process tail ((x,y) : wynik)
-    else process tail wynik
+    then process (dimX,dimY) tail ((x,y) : wynik)
+    else process (dimX,dimY) tail wynik
