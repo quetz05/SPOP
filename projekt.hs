@@ -26,13 +26,16 @@ readInt = read
 
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
-zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = process (dimX,dimY)  (((x,y), v) : tail) []
+zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = process dimX dimY  (((x,y), v) : tail) []
 
-process (_,_) [] wynik = wynik
-process  (dimX,dimY) (((x,y), v) : tail) wynik = 
-    if v > 0 
-    then process (dimX,dimY) tail ((x,y) : wynik)
-    else process (dimX,dimY) tail wynik
+process :: Int -> Int -> [((Int, Int), Int)] -> [((Int, Int),(Int, Int))] -> [((Int, Int),(Int, Int))]
+process _ _ [] wynik = wynik
+process  dimX dimY (((x,y), v) : tail) wynik = 
+    if v > 0
+		then 
+			process dimX dimY  (((x,y), (v-1)) : tail) (checkField dimX dimY wynik (x,y))
+	else 
+		process dimX dimY  tail (checkField dimX dimY wynik (x,y))
 
 outOfFields :: Int -> Int -> Int -> Int -> Bool
 outOfFields x y dimX dimY = (x < 0 || y < 0 || x > dimX || y > dimY)
