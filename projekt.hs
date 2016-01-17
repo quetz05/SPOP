@@ -44,7 +44,7 @@ containsPoint (x:xs) (a,b) = if(fst x == a && snd x == b) then True
 								 
 containsPoint2 :: [((Int, Int),(Int, Int))] -> ((Int,Int),(Int,Int)) -> Bool
 containsPoint2 [] (_,_) = False
-containsPoint2 (x:xs) (a,b) =  if((fst(fst x)) == fst a && fst(snd x) == snd a && snd(fst x) == fst b && snd(snd x) == snd b) then True
+containsPoint2 (x:xs) (a,b) =  if((fst(fst x)) == fst a && snd(fst x) == snd a && fst(snd x) == fst b && snd(snd x) == snd b) then True
                                            else containsPoint2 xs (a,b)
     
 -- // zmienne
