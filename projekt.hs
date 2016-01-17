@@ -42,7 +42,7 @@ readInt = read
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
 zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
-    process (dimX, dimY)  (sortBy sortListOrder (((x,y), v) : tail) ) (prepareBoard dimX dimY (((x,y), v) : tail)) []
+    process (dimX, dimY)  (sortBy sortListOrder (((x,y), v) : tail) ) (prepareBoard (dimX, dimY) (((x,y), v) : tail)) []
 
 process :: Dimension -> [NodeWeight] -> [FieldStatus]  -> [Selection]-> [Selection]
 process _ [] _ wynik = wynik
@@ -146,7 +146,7 @@ sortListOrder (_, v1) (_, v2) =
 
 -- }
 
-prepareBoard :: Int -> Int -> [((Int, Int), Int)] -> [((Int, Int), Int)]
-prepareBoard m n (((x,y), v) : tail)
-    | m < 1 || n < 1    = []
-    | otherwise         = [ ((a,b), 0) | a <- [0..m-1], b <- [0..n-1]]
+prepareBoard :: Dimension -> [FieldStatus] -> [FieldStatus]
+prepareBoard (dimX, dimY) (((x,y), v) : tail)
+    | dimX < 1 || dimY < 1    = []
+    | otherwise         = [ ((a,b), 0) | a <- [0..dimX-1], b <- [0..dimY-1]]
