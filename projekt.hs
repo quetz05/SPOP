@@ -48,12 +48,10 @@ process :: Dimension -> [NodeWeight] -> [FieldStatus]  -> [Selection]-> [Selecti
 process _ [] _ wynik = wynik
 process  (dimX, dimY) (((x,y), v) : tail) board wynik = 
     if v > 0
-        then 
-            process (dimX, dimY)  (((x,y), (v-1)) : tail) board (checkField (dimX, dimY) wynik (x,y))
-    else 
-        process (dimX, dimY)  tail board wynik
+    then process (dimX, dimY)  (((x,y), (v-1)) : tail) board (checkField (dimX, dimY) wynik (x,y))
+    else process (dimX, dimY)  tail board wynik
 
-outOfFields :: Field -> Dimension -> Bool
+outOfFields :: (Int, Int) -> Dimension -> Bool
 outOfFields (x, y) (dimX, dimY) = (x < 0 || y < 0 || x > dimX || y > dimY)
 
 containsPoint :: [Field] -> Field -> Bool
@@ -63,8 +61,10 @@ containsPoint (x:xs) (a,b) = if(fst x == a && snd x == b) then True
                                  
 containsPoint2 :: [(Node,Field)] -> (Node,Field) -> Bool
 containsPoint2 [] (_,_) = False
-containsPoint2 (x:xs) (a,b) =  if((fst(fst x)) == fst a && snd(fst x) == snd a && fst(snd x) == fst b && snd(snd x) == snd b) then True
-                                           else containsPoint2 xs (a,b)
+containsPoint2 (x:xs) (a,b) = 
+    if((fst(fst x)) == fst a && snd(fst x) == snd a && fst(snd x) == fst b && snd(snd x) == snd b) 
+        then True
+        else containsPoint2 xs (a,b)
                                            
 checkField :: Dimension -> [(Node,Field)] -> Node -> [(Node,Field)]
 checkField (dimX, dimY) [] (a,b) = 
@@ -94,17 +94,14 @@ prettyPrint [] result = result
 prettyPrint ((_,(c,d)):tail) result =
     -- trace ("(" ++ show c ++ "," ++ show d ++ ") :result: " ++ show result)$
     if containsPoint result (c,d)
-        then prettyPrint tail result
-    else
-         prettyPrint tail ((c,d):result)
+    then prettyPrint tail result
+    else prettyPrint tail ((c,d):result)
         
         
 sortListOrder (_, v1) (_, v2) = 
     if v1 >= v2
-        then 
-             LT
-    else
-         GT
+    then LT
+    else GT
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
 -- x1 = ((a1,b1), v1)
@@ -150,3 +147,24 @@ prepareBoard :: Dimension -> [FieldStatus] -> [FieldStatus]
 prepareBoard (dimX, dimY) (((x,y), v) : tail)
     | dimX < 1 || dimY < 1    = []
     | otherwise         = [ ((a,b), 0) | a <- [0..dimX-1], b <- [0..dimY-1]]
+
+-- markFields :: Dimension -> [FieldStatus] -> [NodeWeight]-> [FieldStatus]
+-- markFields fs [] = fs
+-- markFields (dimX, dimY) (((a,b),t):xs) (((x,y), v) : tail) =
+--     if v == 4
+--         then (
+--         if(not (outOfFields ((a-1), (b-1)) (dimX, dimY)))
+--             then [((a,b),(a-1,b-1))]
+--             else []
+--         if(not (outOfFields ((a-1), b) (dimX, dimY)))
+--             then [((a,b),(a-1,b))]
+--              else []
+--          if(not (outOfFields (a,(b-1)) (dimX, dimY)))
+--             then [((a,b),(a,b-1))]
+--             else []
+--          if(not (outOfFields (a, b) (dimX, dimY)))
+--             then [((a,b),(a,b))]
+--         else []
+--     )
+--     else []
+--
