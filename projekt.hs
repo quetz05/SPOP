@@ -6,7 +6,7 @@ import Control.Exception
 import System.IO.Error
 
 data Creek = Creek ((Int, Int)) [((Int, Int), Int)]  deriving (Eq, Show, Read) 
-data Point = Point (Int, Int)
+type Point = (Int, Int)
 
 
 main =  do
@@ -35,16 +35,17 @@ readInt = read
     
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
-zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = process dimX dimY  (sortBy sortListOrder (((x,y), v) : tail) ) []
+zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
+    process dimX dimY  (sortBy sortListOrder (((x,y), v) : tail) ) (prepareBoard dimX dimY (((x,y), v) : tail)) []
 
-process :: Int -> Int -> [((Int, Int), Int)] -> [((Int, Int),(Int, Int))] -> [((Int, Int),(Int, Int))]
-process _ _ [] wynik = wynik
-process  dimX dimY (((x,y), v) : tail) wynik = 
+process :: Int -> Int -> [((Int, Int), Int)] -> [((Int, Int), Int)]  -> [((Int, Int),(Int, Int))]-> [((Int, Int),(Int, Int))]
+process _ _ [] _ wynik = wynik
+process  dimX dimY (((x,y), v) : tail) board wynik = 
     if v > 0
         then 
-            process dimX dimY  (((x,y), (v-1)) : tail) (checkField dimX dimY wynik (x,y))
+            process dimX dimY  (((x,y), (v-1)) : tail) board (checkField dimX dimY wynik (x,y))
     else 
-        process dimX dimY  tail wynik
+        process dimX dimY  tail board wynik
 
 outOfFields :: Int -> Int -> Int -> Int -> Bool
 outOfFields x y dimX dimY = (x < 0 || y < 0 || x > dimX || y > dimY)
@@ -138,3 +139,8 @@ sortListOrder (_, v1) (_, v2) =
   -- return true;
 
 -- }
+
+prepareBoard :: Int -> Int -> [((Int, Int), Int)] -> [((Int, Int), Int)]
+prepareBoard m n (((x,y), v) : tail)
+    | m < 1 || n < 1    = []
+    | otherwise         = [ ((a,b), 0) | a <- [0..m-1], b <- [0..n-1]]
