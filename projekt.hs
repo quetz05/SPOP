@@ -110,6 +110,16 @@ sortListOrder (_, v1) (_, v2) =
     if v1 >= v2
     then LT
     else GT
+    
+    
+findWeight :: [NodeWeight] -> Node -> NodeWeight
+findWeight [] _ = ((-1,-1),-1)
+findWeight (((a,b),v):tail) (x,y) = if (a == x && b ==v) then ((a,b),v)
+                                    else findWeight tail (x,y)    
+                                    
+                                    
+
+
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
 -- x1 = ((a1,b1), v1)
