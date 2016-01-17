@@ -215,11 +215,24 @@ countOccurances (x:xs) list wynik =
         
 -- wieght, possibleFields, wszystkie dotad oznaczone(list)
 checkPoint :: NodeWeight -> [Field] -> [Selection] -> Bool
-checkPoint ((x,y), v) possible list =
+checkPoint ((x,y), v) possible list = 
     if v <= (countOccurances possible list 0)
         then True
         else False
         
         
+checkAroundPoint :: Node -> [NodeWeight] -> [Selection] -> Dimension -> [Bool]
+checkAroundPoint (x,y) weights list (dimX, dimY) = 
+    dupa (dimX, dimY) (possibleNode (x, y) (dimX, dimY)) weights list
+    
+dupa :: Dimension -> [Node] -> [NodeWeight] -> [Selection] -> [Bool]
+dupa _ _ [] _ = []
+dupa _ [] _ _ = []
+dupa (dimX, dimY) (x:xs) weights list 
+                        | (snd a) /= (-1) = ((checkPoint a (possibleField (fst a) (dimX, dimY)) list) : (dupa (dimX, dimY) xs weights list))
+                        | otherwise = dupa (dimX, dimY) xs weights list
+                        where a = (findWeight weights x )
+
+   checkAroundPoint (2,2) [((1,1),1), ((2,1), 2), ((2,2),2)] [((2,1), (1,0)), ((2,1), (2,0)), ((2,2), (1,1))] (4,4)
   --      countOccurances (possibleField (1,1) (4,4)) [((2,1), (1,0)), ((2,1), (2,0)), ((2,2), (1,1))] 0
   --  checkPoint ((1,1),1) (possibleField (1,1) (4,4)) [((2,1), (1,0)), ((2,1), (2,0)), ((2,2), (1,1))]
