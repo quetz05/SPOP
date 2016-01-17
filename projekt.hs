@@ -42,7 +42,7 @@ readInt = read
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
 zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
-    process (dimX, dimY)  (sortBy sortListOrder (((x,y), v) : tail) ) (prepareBoard (dimX, dimY) (((x,y), v) : tail)) []
+    process2 (dimX, dimY)  (sortBy sortListOrder (((x,y), v) : tail) )  []
 
 process :: Dimension -> [NodeWeight] -> [FieldStatus]  -> [Selection]-> [Selection]
 process _ [] _ wynik = wynik
@@ -50,6 +50,14 @@ process  (dimX, dimY) (((x,y), v) : tail) board wynik =
     if v > 0
     then process (dimX, dimY)  (((x,y), (v-1)) : tail) board (checkField (dimX, dimY) wynik (x,y))
     else process (dimX, dimY)  tail board wynik
+
+process2 :: Dimension -> [NodeWeight]  -> [Selection]-> [Selection]
+process2 _ []  wynik = wynik
+process2  (dimX, dimY) (((x,y), v) : tail) wynik = 
+    if v > 0
+    then process2 (dimX, dimY)  (((x,y), (v-1)) : tail) (checkField (dimX, dimY) wynik (x,y))
+    else process2 (dimX, dimY)  tail  wynik
+
 
 outOfFields :: (Int, Int) -> Dimension -> Bool
 outOfFields (x, y) (dimX, dimY) = (x < 0 || y < 0 || x > dimX || y > dimY)
@@ -143,11 +151,12 @@ sortListOrder (_, v1) (_, v2) =
 
 -- }
 
+
 prepareBoard :: Dimension -> [FieldStatus] -> [FieldStatus]
 prepareBoard (dimX, dimY) (((x,y), v) : tail)
     | dimX < 1 || dimY < 1    = []
     | otherwise         = [ ((a,b), 0) | a <- [0..dimX-1], b <- [0..dimY-1]]
-
+--
 -- markFields :: Dimension -> [FieldStatus] -> [NodeWeight]-> [FieldStatus]
 -- markFields fs [] = fs
 -- markFields (dimX, dimY) (((a,b),t):xs) (((x,y), v) : tail) =
@@ -167,4 +176,40 @@ prepareBoard (dimX, dimY) (((x,y), v) : tail)
 --         else []
 --     )
 --     else []
---
+
+
+possibleField :: Node -> Dimension -> [Field]
+possibleField (x, y) (m, n) = 
+    [ (a, b) | a <- [x -1, x], b <- [y - 1, y], a >= 0, a < m, b < n, b >= 0 ]
+
+possibleNode :: Node -> Dimension -> [Node]
+possibleNode (x, y) (m, n) = 
+    delete (x,y) [ (a, b) | a <- [x - 1, x, x + 1], b <- [y - 1, y, y + 1], a > 0, a <= m, b <= n, b > 0 ]
+
+
+checkIfContainsField :: Field -> [Selection] -> Bool
+checkIfContainsField _ [] = False
+checkIfContainsField x ((a,b):tail) = 
+    if x == b 
+        then True
+        else checkIfContainsField x tail
+        
+-- liczy pola w liście wszystkich oznaczonych pol, niezaleznie ktory puunkt zaznaczyl 
+countOccurances :: [Field] -> [(Node, Field)] -> Int -> Int
+countOccurances [] _ wynik = wynik
+countOccurances _ [] wynik = wynik
+countOccurances (x:xs) list wynik = 
+    if checkIfContainsField x list 
+        then countOccurances xs list (wynik +1)
+        else countOccurances xs list (wynik) 
+        
+-- wieght, possibleFields, wszystkie dotad oznaczone(list)
+checkPoint :: NodeWeight -> [Field] -> [Selection] -> Bool
+checkPoint ((x,y), v) possible list =
+    if v <= (countOccurances possible list 0)
+        then True
+        else False
+        
+        
+  --      countOccurances (possibleField (1,1) (4,4)) [((2,1), (1,0)), ((2,1), (2,0)), ((2,2), (1,1))] 0
+  --  checkPoint ((1,1),1) (possibleField (1,1) (4,4)) [((2,1), (1,0)), ((2,1), (2,0)), ((2,2), (1,1))]
