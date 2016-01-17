@@ -46,6 +46,28 @@ containsPoint2 :: [((Int, Int),(Int, Int))] -> ((Int,Int),(Int,Int)) -> Bool
 containsPoint2 [] (_,_) = False
 containsPoint2 (x:xs) (a,b) =  if((fst(fst x)) == fst a && snd(fst x) == snd a && fst(snd x) == fst b && snd(snd x) == snd b) then True
                                            else containsPoint2 xs (a,b)
+                                           
+checkField :: Int -> Int -> [((Int, Int),(Int, Int))] -> (Int, Int) -> [((Int, Int),(Int, Int))]
+checkField dimx dimy [] (a,b) = 
+    if(not (outOfFields (a-1) (b-1) dimx dimy))
+        then [((a,b),(a-1,b-1))]
+	else if(not (outOfFields (a-1) (b) dimx dimy))
+        then [((a,b),(a-1,b))]
+    else if(not (outOfFields (a) (b-1) dimx dimy))
+        then [((a,b),(a,b-1))]
+    else if(not (outOfFields (a) (b) dimx dimy))
+        then [((a,b),(a,b))]
+	else []
+checkField dimx dimy (((x1, y1),(x2,y2)):tail) (a,b) = 
+    if(not (outOfFields (a-1) (b-1) dimx dimy) && not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a-1,b-1))))
+        then (((a,b),(a-1,b-1)):((x1, y1),(x2,y2)):tail)
+	else if(not (outOfFields (a-1) (b) dimx dimy) && not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a-1,b))))
+        then (((a,b),(a-1,b)):((x1, y1),(x2,y2)):tail)
+    else if(not (outOfFields (a) (b-1) dimx dimy) && not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a,b-1))))
+        then (((a,b),(a,b-1)):((x1, y1),(x2,y2)):tail)
+    else if(not (outOfFields (a) (b) dimx dimy) && not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a,b))))
+        then (((a,b),(a,b)):((x1, y1),(x2,y2)):tail)
+	else []
     
 -- // zmienne
 -- Creek (w,h) [((a1,b1), v1), ((a2, b2), v2) ... ((an, bn), vn)]
