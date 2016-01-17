@@ -2,6 +2,8 @@ import System.IO
 import Control.Monad
 import Debug.Trace
 import Data.List
+import Control.Exception 
+import System.IO.Error
 
 data Creek = Creek ((Int, Int)) [((Int, Int), Int)]  deriving (Eq, Show, Read) 
 data Point = Point (Int, Int)
@@ -16,12 +18,16 @@ main =  do
 
 -- funkcja wczytująca dane z pliku i wyswietlajaca na ekran
 loadFile f = do  
-                contents <- readFile f
-                let [fileLines] = lines contents
-                let obj = read fileLines :: Creek
-                let result = zrob obj
-                print result
+                structure <- try $ readFile f
+                case (structure :: Either IOError String) of
+                    Left exception -> putStrLn("Nie można wczytać pliku o podanej nazwie")
+                    Right struct -> goStraight struct          
 
+goStraight contents = do                         
+                        let [filelines] = lines contents
+                        let obj = read filelines :: Creek
+                        let result = zrob obj
+                        print result                       
 -- funkcja mapująca                    
 readInt  :: String -> Int
 readInt = read
