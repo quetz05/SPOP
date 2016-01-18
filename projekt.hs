@@ -208,3 +208,15 @@ checkNeighborhood (dimX, dimY) (x:xs) weights list
 
 --checkAroundNode (0,1)  [((0, 1), 1), ((2, 1), 2), ((1, 2), 4), ((3, 2), 1), ((3, 3), 1), ((1,4), 0)] [((2,1),(1,1)), ((0,1),(0,0)),((2,1),(1,0)),((1,2),(1,2)),((1,2),(1,1)),((1,2),(0,2)),((1,2),(0,1))] (4,4)
 
+-- metoda sprawdzająca czy Selekcje zawierają konkretne pole
+containsField :: [Selection] -> Field -> Bool
+containsField [] _ = False                                                        
+containsField ((x,y):tail) field = if(y == field) then True
+                                   else containsField tail field  
+
+-- metoda sprawdzająca czy istnieje strumień dla danej Selekcji
+--isCreek :: Dimension -> [Selection] -> [Field] -> Field -> Bool
+--isCreek (dimX, dimY) ((x,y):tail) [] currentField = if(containsField ((x,y):tail) currentField) then  
+
+
+
