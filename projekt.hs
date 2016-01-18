@@ -254,15 +254,16 @@ containsField ((x,y):tail) field = if(y == field) then True
 findCreek :: Dimension -> [Selection] -> [Field] -> Field -> [Field]
 -- findCreek dimension [] [] _ = createBoard dimension []
 -- findCreek dimension [] fields _ = createBoard dimension []
--- findCreek dimension selections [] (a,b) = if((outOfFields (a,b) dimension) || (containsField selections (a,b))) 
+-- findCreek dimension selections [] (a,b) = if((outOfFields2 (a,b) dimension) || (containsField selections (a,b))) 
                                             -- then []
                                           -- else
                                             -- findCreek dimension selections (findCreek dimension selections (findCreek dimension selections (findCreek dimension selections [(a,b)] (a-1,b)) (a,b-1)) (a+1,b)) (a,b+1)
-findCreek dimension selections fields (a,b) = if((outOfFields (a,b) dimension) || (containsField selections (a,b)) || (containsPoint fields (a,b))) 
+findCreek dimension selections fields (a,b) =  --trace ("\nLIST: " ++ show fields)$
+                                                if((outOfFields2 (a,b) dimension) || (containsField selections (a,b)) || (containsPoint fields (a,b))) 
                                                     then fields
                                               else
                                                     findCreek dimension selections (findCreek dimension selections (findCreek dimension selections (findCreek dimension selections ((a,b):fields) (a-1,b)) (a,b-1)) (a+1,b)) (a,b+1)
-                            
+                                              
 -- funkcja zwracająca ilość pól dla podanych wymiarów planszy
 amountOfFields :: Dimension -> Int
 amountOfFields (dimX, dimY) = dimX * dimY
@@ -271,8 +272,8 @@ amountOfFields (dimX, dimY) = dimX * dimY
 findEmptyField :: [Selection] -> [Field] -> Field
 findEmptyField [] _ = (-1,-1)
 findEmptyField _ [] = (-1,-1)
-findEmptyField selections (x:xs) = if(containsField selections x) then x
-                                   else findEmptyField selections xs
+findEmptyField selections (x:xs) = if(containsField selections x) then findEmptyField selections xs
+                                   else x
                             
 -- funkcja sprawdzająca czy istnieje strumień dla danej Selekcji i wielkości planszy (W SELEKCJI NIE MOŻE BYĆ POWTARZAJĄCYCH SIĘ PÓL!)
 isCreek :: Dimension -> [Selection] -> Bool
@@ -281,5 +282,7 @@ isCreek dimension selections = if(((length (findCreek dimension selections [] (f
                                     then True
                                else False
 
-
+-- funkcja sprawdzająca czy punkt znajduje się poza planszą o danych wymiarach
+outOfFields2 :: (Int, Int) -> Dimension -> Bool
+outOfFields2 (x, y) (dimX, dimY) = (x < 0 || y < 0 || x >= dimX || y >= dimY)
 
