@@ -107,30 +107,43 @@ checkField (dimX, dimY) [] (a,b) _  =
 checkField (dimX, dimY) (((x1, y1),(x2,y2)):tail) (a,b) weight = 
     -- trace ("(" ++ show a ++ "," ++ show b ++ ") :result: " ++ show weight ++ "\n\n" ++ show (((x1, y1),(x2,y2)):tail) ++ "\n")$
     if( not (outOfFields ((a-1), (b-1)) (dimX, dimY)) && 
-        not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a-1,b-1))) &&
-        not (elem False (checkAroundNode (a,b) weight (((a,b),(a-1,b-1)):((x1, y1),(x2,y2)):tail) (dimX, dimY)))
+        not (containsPoint2 selection upperLeft) &&
+        not (elem False (checkAroundNode (a,b) weight selectionWithUpperLeft (dimX, dimY))) &&
+        isCreek (dimX, dimY) selectionWithUpperLeft
         )
-        then (((a,b),(a-1,b-1)):((x1, y1),(x2,y2)):tail)
+        then selectionWithUpperLeft
     else if(
         not (outOfFields ((a-1), b) (dimX, dimY)) && 
-        not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a-1,b))) &&
-        not (elem False (checkAroundNode (a,b) weight (((a,b),(a-1,b)):((x1, y1),(x2,y2)):tail) (dimX, dimY)))
+        not (containsPoint2 selection lowerLeft) &&
+        not (elem False (checkAroundNode (a,b) weight selectionWithLowerLeft (dimX, dimY))) &&
+        isCreek (dimX, dimY) selectionWithLowerLeft
         )
-        then (((a,b),(a-1,b)):((x1, y1),(x2,y2)):tail)
+        then selectionWithLowerLeft
     else if(
         not (outOfFields (a,(b-1)) (dimX, dimY)) && 
-        not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a,b-1))) &&
-        not (elem False (checkAroundNode (a,b) weight (((a,b),(a,b-1)):((x1, y1),(x2,y2)):tail) (dimX, dimY)))
+        not (containsPoint2 selection upperRight) &&
+        not (elem False (checkAroundNode (a,b) weight selectionWithUpperRight (dimX, dimY))) &&
+        isCreek (dimX, dimY) selectionWithUpperRight
         )
-        then (((a,b),(a,b-1)):((x1, y1),(x2,y2)):tail)
+        then selectionWithUpperRight
     else if(
         not (outOfFields (a, b) (dimX, dimY)) && 
-        not (containsPoint2 (((x1, y1),(x2,y2)):tail) ((a,b),(a,b))) &&
-        not (elem False (checkAroundNode (a,b) weight (((a,b),(a,b)):((x1, y1),(x2,y2)):tail) (dimX, dimY)))
+        not (containsPoint2 selection lowerRight) &&
+        not (elem False (checkAroundNode (a,b) weight selectionWithLowerRight (dimX, dimY))) &&
+        isCreek (dimX, dimY) selectionWithLowerRight
         )
-        then (((a,b),(a,b)):((x1, y1),(x2,y2)):tail)
+        then selectionWithLowerRight
     else []
-    
+    where 
+        selection = (((x1, y1),(x2,y2)):tail)
+        upperLeft = ((a,b),(a-1,b-1))
+        lowerLeft = ((a,b),(a-1,b))
+        upperRight = ((a,b),(a,b-1))
+        lowerRight = ((a,b),(a,b))
+        selectionWithUpperLeft  = (upperLeft:selection) 
+        selectionWithLowerLeft  = (lowerLeft:selection) 
+        selectionWithUpperRight  = (upperRight:selection) 
+        selectionWithLowerRight  = (lowerRight:selection)
     
 prettyPrint :: [(Node,Field)] -> [Field] -> [Field]
 prettyPrint [] result = result
@@ -222,6 +235,10 @@ checkNeighborhood (dimX, dimY) (x:xs) weights list
 
 -- funkcja tworząca listę wszystkich pól na planszy
 createBoard :: Dimension -> [Field] -> [Field]
+createBoard (dimX, dimY) []
+    | dimX < 1 || dimY < 1    = []
+    | otherwise = [ (a,b) | a <- [0..dimX-1], b <- [0..dimY-1]]
+    
 createBoard (dimX, dimY) ((x,y) : tail)
     | dimX < 1 || dimY < 1    = []
     | otherwise = [ (a,b) | a <- [0..dimX-1], b <- [0..dimY-1]]
