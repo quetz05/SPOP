@@ -1,3 +1,5 @@
+import Types
+
 import System.IO  
 import Control.Monad
 import Debug.Trace
@@ -6,14 +8,6 @@ import Control.Exception
 import System.IO.Error
 
 
-
-type Node = (Int, Int)
-type NodeWeight = (Node, Int)
-type Field = (Int, Int)
-type FieldStatus = (Field, Int)
-type Dimension = (Int, Int)
-type Selection = (Node, Field)
-data Creek = Creek Dimension [NodeWeight]  deriving (Eq, Show, Read) 
 
 main =  do
             putStrLn "Witaj w programie Strumyczek autorstwa Jarosława Kornaty i Bartosza Domagały"
