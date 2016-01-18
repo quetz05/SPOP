@@ -29,18 +29,25 @@ letsPlay = do
 loadFile f = do  
                 structure <- try $ readFile f
                 case (structure :: Either IOError String) of
-                    Left exception -> putStrLn("Nie można wczytać pliku o podanej nazwie")
+                    Left exception -> putStrLn("Nie można wczytać pliku o podanej nazwie.")
                     Right struct -> parseStructure struct          
 
 -- funkcja parsująca dane, uruchamiająca algorytm i na koniec zwracająca wynik
 parseStructure contents = do                         
                         let [filelines] = lines contents
                         let obj = read filelines :: Creek
-                        let result =  zrob obj
-                        let printe = (prettyPrint result [])
-                        print printe
-                       -- print result
-   
+                        result <- try (print obj) :: IO (Either SomeException ())
+                        case result of
+                            Left  _    -> putStrLn "Format pliku jest niepoprawny."
+                            Right ()  ->  runAlgorithm obj
+
+                       
+runAlgorithm :: Creek -> IO ()
+runAlgorithm obj = do
+                    let result =  zrob obj
+                    let printe = (prettyPrint result [])
+                    print printe
+                       
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
 zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
