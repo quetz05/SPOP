@@ -25,14 +25,15 @@ letsPlay = do
             letsPlay
             exitWith ExitSuccess
             
--- funkcja wczytująca dane z pliku i wyswietlajaca na ekran
+-- funkcja wczytująca dane z pliku, a następnie wywołująca funkcje parsującą
 loadFile f = do  
                 structure <- try $ readFile f
                 case (structure :: Either IOError String) of
                     Left exception -> putStrLn("Nie można wczytać pliku o podanej nazwie")
-                    Right struct -> goStraight struct          
+                    Right struct -> parseStructure struct          
 
-goStraight contents = do                         
+-- funkcja parsująca dane, uruchamiająca algorytm i na koniec zwracająca wynik
+parseStructure contents = do                         
                         let [filelines] = lines contents
                         let obj = read filelines :: Creek
                         let result =  zrob obj
@@ -44,6 +45,7 @@ goStraight contents = do
 zrob (Creek (_,_) []) = []
 zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
     process2 (dimX, dimY)  (sortBy sortListOrder (((x,y), v) : tail) )  [] (((x,y), v) : tail)
+
 
 process :: Dimension -> [NodeWeight] -> [FieldStatus]  -> [Selection]-> [Selection]
 process _ [] _ wynik = wynik
@@ -61,15 +63,18 @@ process2  (dimX, dimY) (((x,y), v) : tail) wynik trueWeight =
     else process2 (dimX, dimY)  tail  wynik trueWeight
 
 
+-- funkcja sprawdzająca czy punkt znajduje się poza planszą o danych wymiarach
 outOfFields :: (Int, Int) -> Dimension -> Bool
 outOfFields (x, y) (dimX, dimY) = (x < 0 || y < 0 || x > dimX || y > dimY)
 
+-- funkcja sprawdzająca czy dany lista pól zawiera dane pole
 containsPoint :: [Field] -> Field -> Bool
 containsPoint [] (_,_) = False
 containsPoint (x:xs) (a,b) = if(fst x == a && snd x == b) then True
                                  else containsPoint xs (a,b)
-                                 
-containsPoint2 :: [(Node,Field)] -> (Node,Field) -> Bool
+
+-- funkcja sprawdzająca czy dany lista selekcji zawiera daną selekcję                                 
+containsPoint2 :: [Selection] -> Selection -> Bool
 containsPoint2 [] (_,_) = False
 containsPoint2 (x:xs) (a,b) = 
     -- trace ("Elemnty dodane: " ++ show (x:xs) ++ ", szukany " ++ show (a,b) ++ ")")$
