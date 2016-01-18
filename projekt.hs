@@ -208,15 +208,50 @@ checkNeighborhood (dimX, dimY) (x:xs) weights list
 
 --checkAroundNode (0,1)  [((0, 1), 1), ((2, 1), 2), ((1, 2), 4), ((3, 2), 1), ((3, 3), 1), ((1,4), 0)] [((2,1),(1,1)), ((0,1),(0,0)),((2,1),(1,0)),((1,2),(1,2)),((1,2),(1,1)),((1,2),(0,2)),((1,2),(0,1))] (4,4)
 
--- metoda sprawdzająca czy Selekcje zawierają konkretne pole
+
+-- funkcja tworząca listę wszystkich pól na planszy
+createBoard :: Dimension -> [Field] -> [Field]
+createBoard (dimX, dimY) ((x,y) : tail)
+    | dimX < 1 || dimY < 1    = []
+    | otherwise = [ (a,b) | a <- [0..dimX-1], b <- [0..dimY-1]]
+
+
+-- funkcja sprawdzająca czy Selekcje zawierają konkretne pole
 containsField :: [Selection] -> Field -> Bool
 containsField [] _ = False                                                        
 containsField ((x,y):tail) field = if(y == field) then True
                                    else containsField tail field  
 
--- metoda sprawdzająca czy istnieje strumień dla danej Selekcji
---isCreek :: Dimension -> [Selection] -> [Field] -> Field -> Bool
---isCreek (dimX, dimY) ((x,y):tail) [] currentField = if(containsField ((x,y):tail) currentField) then  
+-- funkcja poruszająca się rekurencyjnie po planszy, szukając wszystkich możliwych przejść                             
+findCreek :: Dimension -> [Selection] -> [Field] -> Field -> [Field]
+-- findCreek dimension [] [] _ = createBoard dimension []
+-- findCreek dimension [] fields _ = createBoard dimension []
+-- findCreek dimension selections [] (a,b) = if((outOfFields (a,b) dimension) || (containsField selections (a,b))) 
+                                            -- then []
+                                          -- else
+                                            -- findCreek dimension selections (findCreek dimension selections (findCreek dimension selections (findCreek dimension selections [(a,b)] (a-1,b)) (a,b-1)) (a+1,b)) (a,b+1)
+findCreek dimension selections fields (a,b) = if((outOfFields (a,b) dimension) || (containsField selections (a,b)) || (containsPoint fields (a,b))) 
+                                                    then fields
+                                              else
+                                                    findCreek dimension selections (findCreek dimension selections (findCreek dimension selections (findCreek dimension selections ((a,b):fields) (a-1,b)) (a,b-1)) (a+1,b)) (a,b+1)
+                            
+-- funkcja zwracająca ilość pól dla podanych wymiarów planszy
+amountOfFields :: Dimension -> Int
+amountOfFields (dimX, dimY) = dimX * dimY
+
+-- funkcja szukająca pierwszego wolnego pola
+findEmptyField :: [Selection] -> [Field] -> Field
+findEmptyField [] _ = (-1,-1)
+findEmptyField _ [] = (-1,-1)
+findEmptyField selections (x:xs) = if(containsField selections x) then x
+                                   else findEmptyField selections xs
+                            
+-- funkcja sprawdzająca czy istnieje strumień dla danej Selekcji i wielkości planszy (W SELEKCJI NIE MOŻE BYĆ POWTARZAJĄCYCH SIĘ PÓL!)
+isCreek :: Dimension -> [Selection] -> Bool
+isCreek dimension [] = True
+isCreek dimension selections = if(((length (findCreek dimension selections [] (findEmptyField selections (createBoard dimension [])))) + (length selections)) == (amountOfFields dimension)) 
+                                    then True
+                               else False
 
 
 
