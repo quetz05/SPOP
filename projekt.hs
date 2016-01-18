@@ -6,16 +6,25 @@ import Debug.Trace
 import Data.List
 import Control.Exception 
 import System.IO.Error
+import System.Exit
 
-
-
+-- główna funkcja programu, uruchamia interfejs użytkownika
 main =  do
-            putStrLn "Witaj w programie Strumyczek autorstwa Jarosława Kornaty i Bartosza Domagały"
+            putStrLn "Witaj w programie STRUMYCZEK autorstwa Jarosława Kornaty i Bartosza Domagały"
+            letsPlay
+            
+            
+-- funkcja uruchamiajaca grę w pętli dopóki użytkownik nie postanowi jej zakończyć              
+letsPlay = do 
             putStrLn " "
-            putStrLn "Wpisz proszę nazwę pliku, z którego ma być wczytana łamigłówka:"
+            putStrLn "__________________________________________________________________________________________"
+            putStrLn "Wpisz proszę nazwę pliku, z którego ma być wczytana łamigłówka (bądź wpisz 'q' by wyjść):"
             fileName <- getLine
-            loadFile fileName
-
+            if(fileName == "q") then exitWith ExitSuccess
+            else loadFile fileName
+            letsPlay
+            exitWith ExitSuccess
+            
 -- funkcja wczytująca dane z pliku i wyswietlajaca na ekran
 loadFile f = do  
                 structure <- try $ readFile f
@@ -30,11 +39,7 @@ goStraight contents = do
                         let printe = (prettyPrint result [])
                         print printe
                        -- print result
--- funkcja mapująca                    
-readInt  :: String -> Int
-readInt = read
-
-    
+   
 -- pusta lista przeciec to zwracamy pusta liste zamalowanych
 zrob (Creek (_,_) []) = []
 zrob (Creek (dimX,dimY) (((x,y), v) : tail)) = 
