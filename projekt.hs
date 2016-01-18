@@ -253,7 +253,7 @@ findEmptyField selections (x:xs) = if(containsField selections x) then x
 -- funkcja sprawdzająca czy istnieje strumień dla danej Selekcji i wielkości planszy (W SELEKCJI NIE MOŻE BYĆ POWTARZAJĄCYCH SIĘ PÓL!)
 isCreek :: Dimension -> [Selection] -> Bool
 isCreek dimension [] = True
-isCreek dimension selections = if(((length (findCreek dimension selections [] (findEmptyField selections (createBoard dimension [])))) + (length selections)) == (amountOfFields dimension)) 
+isCreek dimension selections = if(((length (findCreek dimension selections [] (findEmptyField selections (createBoard dimension [])))) + (length (prettyPrint selections []))) == (amountOfFields dimension)) 
                                     then True
                                else False
 
